@@ -419,7 +419,7 @@ async function playCry(name){
 async function loadPokemon(id){
   pokemonContainer.innerHTML = '<div class="pokemon-card"><p style="opacity:.7">Loading Pokémon…</p></div>';
   try {
-    const pRes = await fetch("https://pokeapi.co/api/v2/pokemon/${id}");
+    const pRes = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
     if(!pRes.ok) throw new Error('pokemon fetch failed');
     const pData = await pRes.json();
     currentPokemonData = pData; currentPokemonName = pData.name;
@@ -450,7 +450,7 @@ async function loadPokemon(id){
 
     // fetch details for all relevant variants
     const fetches = await Promise.all(fetchList.map(async nm=>{
-      try{ const r = await fetch("https://pokeapi.co/api/v2/pokemon/${nm}"); if(!r.ok) return {name:nm, ok:false}; const j = await r.json(); return {name:nm, ok:true, data:j}; }
+      try{ const r = await fetch(`https://pokeapi.co/api/v2/pokemon/${nm}`); if(!r.ok) return {name:nm, ok:false}; const j = await r.json(); return {name:nm, ok:true, data:j}; }
       catch(e){ return {name:nm, ok:false}; }
     }));
     const pokemonMap = {}; fetches.forEach(f => { if(f.ok) pokemonMap[f.name] = f.data; });
@@ -787,3 +787,4 @@ loadEditorFromLocal();
 </script>
 </body>
 </html>
+
