@@ -301,22 +301,6 @@ button.generate:hover{transform:translateY(-2px);}
 
 <script>
 
-// Near the top of your script, before loadPokemon is defined:
-function prepareMap(speciesData, pokemonData) {
-  // Example fallback if no data was defined
-  const tabContent = document.getElementById('tabContent');
-  if (!tabContent) return;
-  tabContent.innerHTML = `<p style="opacity:.8">Location data is not yet available for ${pokemonData.name}.</p>`;
-}
-
-// Your existing loadPokemon / other code can stay the same
-async function loadPokemon(id) {
-  // fetch pokemon data...
-  // then call:
-  prepareMap(speciesData, pokemonData);
-  // …
-}
-
 /* ================== Pokégear ver.10.2 script (with editor) ================== */
 
 /* ---------- Editable internal DBs (short examples, expand as needed) ---------- */
@@ -607,7 +591,6 @@ async function loadPokemon(id){
       </div>
     `;
 
-    prepareMap(spData, pData);
     prepareFacts(spData, pData);
 
   } catch(err){
@@ -804,4 +787,5 @@ loadEditorFromLocal();
 </script>
 </body>
 </html>
+
 
