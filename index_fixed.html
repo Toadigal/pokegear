@@ -638,7 +638,7 @@ function renderMapTab(which){
   if(!currentSpeciesData || !currentPokemonData){ mapContent.innerHTML = '<p style="opacity:.8">No data yet — roll a Pokémon.</p>'; return; }
   const speciesName = currentSpeciesData.name; const pokemonName = currentPokemonData.name;
   const internalGens = generationEncounterData[pokemonName] || generationEncounterData[speciesName] || [];
-  fetch("https://pokeapi.co/api/v2/pokemon/${currentPokemonData.id}")
+  fetch(`https://pokeapi.co/api/v2/pokemon/${currentPokemonData.id}`)
     .then(r=>r.ok? r.json(): null)
     .then(j=>{
       const versions = (j?.game_indices||[]).map(g=>g.version.name).filter(Boolean); const uniqueVersions = Array.from(new Set(versions));
@@ -787,4 +787,3 @@ loadEditorFromLocal();
 </script>
 </body>
 </html>
-
