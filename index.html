@@ -414,6 +414,77 @@ async function playCry(name){
   alert("No game cry found for this Pokémon in the available sources.");
   isPlayingCry=false; callBtn.classList.remove('toggled');
 }
+/* ========== TYPE CHART MODULE (inserted by assistant) ========== */
+
+const TYPE_CHART = {
+  normal:    { weak: ["fighting"], resist: [], immune: ["ghost"] },
+  fire:      { weak: ["water","ground","rock"], resist: ["fire","grass","ice","bug","steel","fairy"], immune: [] },
+  water:     { weak: ["electric","grass"], resist: ["fire","water","ice","steel"], immune: [] },
+  electric:  { weak: ["ground"], resist: ["electric","flying","steel"], immune: [] },
+  grass:     { weak: ["fire","ice","poison","flying","bug"], resist: ["water","electric","grass","ground"], immune: [] },
+  ice:       { weak: ["fire","fighting","rock","steel"], resist: ["ice"], immune: [] },
+  fighting:  { weak: ["flying","psychic","fairy"], resist: ["bug","rock","dark"], immune: [] },
+  poison:    { weak: ["ground","psychic"], resist: ["grass","fighting","poison","bug","fairy"], immune: [] },
+  ground:    { weak: ["water","grass","ice"], resist: ["poison","rock"], immune: ["electric"] },
+  flying:    { weak: ["electric","ice","rock"], resist: ["grass","fighting","bug"], immune: ["ground"] },
+  psychic:   { weak: ["bug","ghost","dark"], resist: ["fighting","psychic"], immune: [] },
+  bug:       { weak: ["fire","flying","rock"], resist: ["grass","fighting","ground"], immune: [] },
+  rock:      { weak: ["water","grass","fighting","ground","steel"], resist: ["normal","fire","poison","flying"], immune: [] },
+  ghost:     { weak: ["ghost","dark"], resist: ["poison","bug"], immune: ["normal","fighting"] },
+  dragon:    { weak: ["ice","dragon","fairy"], resist: ["fire","water","electric","grass"], immune: [] },
+  dark:      { weak: ["fighting","bug","fairy"], resist: ["ghost","dark"], immune: ["psychic"] },
+  steel:     { weak: ["fire","fighting","ground"], resist: ["normal","grass","ice","flying","psychic","bug","rock","dragon","steel","fairy"], immune: ["poison"] },
+  fairy:     { weak: ["poison","steel"], resist: ["fighting","bug","dark"], immune: ["dragon"] }
+};
+
+// Returns an object of attacking-type -> multiplier (1, 2, 4, 0.5, 0.25, 0)
+function calculateTypeMatchups(types){
+  // start all multipliers at 1
+  const mults = {};
+  Object.keys(TYPE_CHART).forEach(t => mults[t] = 1);
+
+  types.forEach(own => {
+    const row = TYPE_CHART[own];
+    if(!row) return;
+    // weaknesses: attacker-type does 2x (multiply by 2)
+    row.weak.forEach(att => { mults[att] = mults[att] * 2; });
+    // resistances: attacker-type does 0.5x (multiply by 0.5)
+    row.resist.forEach(att => { mults[att] = mults[att] * 0.5; });
+    // immunities: attacker-type does 0x
+    row.immune.forEach(att => { mults[att] = 0; });
+  });
+
+  // convert the map into categories
+  const result = { weak4: [], weak2: [], resist2: [], resist4: [], immune: [] };
+  Object.entries(mults).forEach(([t, m]) => {
+    if(m === 0) result.immune.push(t);
+    else if(m === 4) result.weak4.push(t);
+    else if(m === 2) result.weak2.push(t);
+    else if(m === 0.25) result.resist4.push(t);
+    else if(m === 0.5) result.resist2.push(t);
+  });
+  return result;
+}
+
+function renderTypeChart(typeList){
+  if(!typeList || !typeList.length) return `<div class="typechart"><strong>Type Chart:</strong> None</div>`;
+  const tc = calculateTypeMatchups(typeList);
+  const span = (arr) => arr.length ? arr.map(x=>`<span class="type" style="padding:4px 8px;font-size:12px;margin-right:6px;">${x}</span>`).join("") : `<em style="opacity:.7">None</em>`;
+  return `
+    <div class="typechart" style="margin-top:10px;">
+      <h4 style="margin:6px 0;">Type Chart</h4>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+        <div><strong>Weak ×4:</strong><div>${span(tc.weak4)}</div></div>
+        <div><strong>Weak ×2:</strong><div>${span(tc.weak2)}</div></div>
+        <div><strong>Resist ×2:</strong><div>${span(tc.resist2)}</div></div>
+        <div><strong>Resist ×4:</strong><div>${span(tc.resist4)}</div></div>
+        <div><strong>Immune:</strong><div>${span(tc.immune)}</div></div>
+      </div>
+    </div>
+  `;
+}
+
+/* ========== END TYPE CHART MODULE ========== */
 
 /* ---------- Core: load and render Pokémon ---------- */
 async function loadPokemon(id){
@@ -786,4 +857,5 @@ loadEditorFromLocal();
 </script>
 </body>
 </html>
+
 
