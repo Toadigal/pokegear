@@ -455,32 +455,59 @@ async function loadPokemon(id){
     }));
     const pokemonMap = {}; fetches.forEach(f => { if(f.ok) pokemonMap[f.name] = f.data; });
 
-    const varietyMap = {};
-    spData.varieties.forEach(v => {
-      const nm = v.pokemon.name; const info = pokemonMap[nm];
-      varietyMap[nm] = {
-        spriteApi: info?.sprites?.other?.['official-artwork']?.front_default || info?.sprites?.front_default || SILHOUETTE_SVG,
-        pokedb: pokedbArtworkUrl(nm),
-        showdown: showdownSpriteUrl(nm),
-        types: info?.types?.map(t=>t.type.name) || [],
-        name: info?.name || nm,
-        game_indices: info?.game_indices?.map(g=>g.version.name) || []
-      };
-    });
-    for(const nm of fetchList){
-      if(!varietyMap[nm]){
-        const info = pokemonMap[nm];
-        varietyMap[nm] = {
-          spriteApi: info?.sprites?.other?.['official-artwork']?.front_default || info?.sprites?.front_default || SILHOUETTE_SVG,
-          pokedb: pokedbArtworkUrl(nm),
-          showdown: showdownSpriteUrl(nm),
-          types: info?.types?.map(t=>t.type.name) || [],
-          name: info?.name || nm,
-          game_indices: info?.game_indices?.map(g=>g.version.name) || []
-        };
-      }
-    }
+   const varietyMap = {};
 
+// --- MAIN VARIETIES FROM POKEAPI ---
+spData.varieties.forEach(v => {
+  const nm = v.pokemon.name;
+  const info = pokemonMap[nm];
+
+  const normalSprite =
+      info?.sprites?.other?.['official-artwork']?.front_default ||
+      info?.sprites?.front_default ||
+      SILHOUETTE_SVG;
+
+  const shinySprite =
+      info?.sprites?.front_shiny ||
+      SILHOUETTE_SVG;
+
+  varietyMap[nm] = {
+    spriteApi: normalSprite,
+    shinySprite: shinySprite,
+    pokedb: pokedbArtworkUrl(nm),
+    showdown: showdownSpriteUrl(nm),
+    types: info?.types?.map(t => t.type.name) || [],
+    name: info?.name || nm,
+    game_indices: info?.game_indices?.map(g => g.version.name) || []
+  };
+});
+
+
+// --- FALLBACK FOR FORMS FETCHED MANUALLY ---
+for (const nm of fetchList) {
+  if (!varietyMap[nm]) {
+    const info = pokemonMap[nm];
+
+    const normalSprite =
+        info?.sprites?.other?.['official-artwork']?.front_default ||
+        info?.sprites?.front_default ||
+        SILHOUETTE_SVG;
+
+    const shinySprite =
+        info?.sprites?.front_shiny ||
+        SILHOUETTE_SVG;
+
+    varietyMap[nm] = {
+      spriteApi: normalSprite,
+      shinySprite: shinySprite,
+      pokedb: pokedbArtworkUrl(nm),
+      showdown: showdownSpriteUrl(nm),
+      types: info?.types?.map(t => t.type.name) || [],
+      name: info?.name || nm,
+      game_indices: info?.game_indices?.map(g => g.version.name) || []
+    };
+  }
+}
     // build evoHTML
     let evoHtml = "";
     if(!paths.length) evoHtml = "<div class='note'>No evolution data.</div>";
@@ -575,7 +602,7 @@ async function loadPokemon(id){
         <p style="margin:0;color:#6a3b52;font-weight:800;">${genus}</p>
         <div class="images">
           ${artImgTag}
-          <img src="${pokedbArtworkUrl(pData.name)}" data-api="${pData.sprites.front_shiny|| SILHOUETTE_SVG}" data-showdown="${showdownSpriteUrl(pData.name)}" alt="${capitalize(pData.name)} shiny" class="small-img" onerror="this.onerror=null;this.src=this.dataset.showdown||this.dataset.api||'${SILHOUETTE_SVG}';" />
+          <img src="${pokedbArtworkUrl(pData.name)}" data-api="${pData.sprites.other?['official artwork'].front_shiny?|| SILHOUETTE_SVG}" data-showdown="${showdownSpriteUrl(pData.name)}" alt="${capitalize(pData.name)} shiny" class="small-img" onerror="this.onerror=null;this.src=this.dataset.showdown||this.dataset.api||'${SILHOUETTE_SVG}';" />
         </div>
         <div style="display:flex;align-items:center;gap:12px;flex-direction:row;justify-content:center;margin-top:8px;">
           <div class="generation-badge">${generationName}</div>
@@ -590,7 +617,6 @@ async function loadPokemon(id){
       </div>
     `;
 
-    prepareMap(spData, pData);
     prepareFacts(spData, pData);
 
   } catch(err){
@@ -787,5 +813,6 @@ loadEditorFromLocal();
 </script>
 </body>
 </html>
+
 
 
