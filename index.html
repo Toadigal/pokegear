@@ -477,23 +477,6 @@ async function loadPokemon(id){
           types: info?.types?.map(t=>t.type.name) || [],
           name: info?.name || nm,
           game_indices: info?.game_indices?.map(g=>g.version.name) || []
-       // --- SHINY SPRITE ---
-let shinyUrl = pData.sprites.front_shiny;
-
-let shinyImg = document.createElement("img");
-shinyImg.className = "poke-sprite";
-
-if (shinyUrl) {
-    shinyImg.src = shinyUrl;
-    shinyImg.alt = pData.name + " shiny sprite";
-} else {
-    // fallback silhouette
-    shinyImg.src = "https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/sprites/0.png";
-    shinyImg.alt = "No shiny available";
-}
-
-document.getElementById("sprite-area").appendChild(shinyImg);
-
         };
       }
     }
@@ -592,7 +575,7 @@ document.getElementById("sprite-area").appendChild(shinyImg);
         <p style="margin:0;color:#6a3b52;font-weight:800;">${genus}</p>
         <div class="images">
           ${artImgTag}
-          <img src="${pokedbArtworkUrl(pData.name)}" data-api="${pData.sprites.other?.['official-artwork']?.front_shiny || SILHOUETTE_SVG}" data-showdown="${showdownSpriteUrl(pData.name)}" alt="${capitalize(pData.name)} shiny" class="small-img" onerror="this.onerror=null;this.src=this.dataset.showdown||this.dataset.api||'${SILHOUETTE_SVG}';" />
+          <img src="${pokedbArtworkUrl(pData.name)}" data-api="${pData.sprites.front_shiny|| SILHOUETTE_SVG}" data-showdown="${showdownSpriteUrl(pData.name)}" alt="${capitalize(pData.name)} shiny" class="small-img" onerror="this.onerror=null;this.src=this.dataset.showdown||this.dataset.api||'${SILHOUETTE_SVG}';" />
         </div>
         <div style="display:flex;align-items:center;gap:12px;flex-direction:row;justify-content:center;margin-top:8px;">
           <div class="generation-badge">${generationName}</div>
@@ -804,4 +787,5 @@ loadEditorFromLocal();
 </script>
 </body>
 </html>
+
 
