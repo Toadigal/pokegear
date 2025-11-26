@@ -652,7 +652,12 @@ async function loadPokemon(id){
           <div class="generation-badge">${generationName}</div>
         </div>
         <div class="info">
+
           <div class="types">${typesHtml}</div>
+         <!-- TYPE CHART -->
+          <div id="typechart-area"></div>
+          <div id="typechart-area">
+          ${renderTypeChart(pData.types.map(t => t.type.name))} </div>
           <div class="dex-entry">${dexEntry}</div>
           <div class="evolutions"><h4 style="margin:8px 0 6px 0;">Evolution Line</h4>${evoHtml}</div>
           ${formsHtml}
@@ -857,5 +862,6 @@ loadEditorFromLocal();
 </script>
 </body>
 </html>
+
 
 
