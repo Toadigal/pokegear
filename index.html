@@ -507,12 +507,24 @@ function renderTypeChart(typeList){
     window.open(url, "_blank");
 }
 /* ---------- Core: load and render Pokémon ---------- */
-async function loadPokemon(id){
-  pokemonContainer.innerHTML = '<div class="pokemon-card"><p style="opacity:.7">Loading Pokémon…</p></div>';
-  try {
-    const pRes = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
-    if(!pRes.ok) throw new Error('pokemon fetch failed');
-    const pData = await pRes.json();
+async function loadPokemon(q){
+    // q may be name or ID
+    let endpoint = "";
+
+    // numeric → treat as ID
+    if(!isNaN(q)){
+        endpoint = `https://pokeapi.co/api/v2/pokemon/${q}`;
+    }
+    else {
+        // string → treat as name
+        endpoint = `https://pokeapi.co/api/v2/pokemon/${q.toLowerCase()}`;
+    }
+
+    try {
+        const res = await fetch(endpoint);
+        if(!res.ok) throw new Error("not found");
+        const pData = await res.json();
+
     currentPokemonData = pData; currentPokemonName = pData.name;
 
     const spRes = await fetch(pData.species.url);
@@ -905,6 +917,7 @@ loadEditorFromLocal();
 </script>
 </body>
 </html>
+
 
 
 
