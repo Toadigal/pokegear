@@ -423,6 +423,21 @@ async function playCry(name){
   alert("No game cry found for this Pokémon in the available sources.");
   isPlayingCry=false; callBtn.classList.remove('toggled');
 }
+ function checkURLForPokemon(){
+    const params = new URLSearchParams(window.location.search);
+    const q = params.get("pokemon");
+    if(!q) return;
+
+    // If it's a number, load by ID
+    if(!isNaN(q)){
+        loadPokemon(q);
+        return;
+    }
+
+    // Otherwise load by name
+    loadPokemon(q.toLowerCase());
+}
+window.addEventListener("load", checkURLForPokemon);
 
 function searchPokemon(){
     const name = document.getElementById("searchInput").value.trim().toLowerCase();
@@ -550,22 +565,6 @@ async function loadPokemon(q){
     const speciesSet = new Set(varietyNames);
     paths.forEach(p => p.forEach(n => speciesSet.add(n.species)));
     const fetchList = Array.from(speciesSet);
-
-    function checkURLForPokemon(){
-    const params = new URLSearchParams(window.location.search);
-    const q = params.get("pokemon");
-    if(!q) return;
-
-    // If it's a number, load by ID
-    if(!isNaN(q)){
-        loadPokemon(q);
-        return;
-    }
-
-    // Otherwise load by name
-    loadPokemon(q.toLowerCase());
-}
-window.addEventListener("load", checkURLForPokemon);
 
     // fetch details for all relevant variants
     const fetches = await Promise.all(fetchList.map(async nm=>{
@@ -917,6 +916,7 @@ loadEditorFromLocal();
 </script>
 </body>
 </html>
+
 
 
 
