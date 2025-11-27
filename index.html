@@ -541,10 +541,17 @@ async function loadPokemon(id){
 
     function checkURLForPokemon(){
     const params = new URLSearchParams(window.location.search);
-    const name = params.get("pokemon");
-    if(name){
-        loadPokemon(name.toLowerCase());
+    const q = params.get("pokemon");
+    if(!q) return;
+
+    // If it's a number, load by ID
+    if(!isNaN(q)){
+        loadPokemon(q);
+        return;
     }
+
+    // Otherwise load by name
+    loadPokemon(q.toLowerCase());
 }
 window.addEventListener("load", checkURLForPokemon);
 
@@ -898,6 +905,7 @@ loadEditorFromLocal();
 </script>
 </body>
 </html>
+
 
 
 
