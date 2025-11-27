@@ -64,6 +64,17 @@ body{
 .battery{width:48px;height:18px;border-radius:4px;border:2px solid #083e6b;display:flex;align-items:center;padding:2px 4px;box-sizing:border-box;}
 .bat-level{height:8px;border-radius:2px;background:linear-gradient(90deg,#ff86bf,#ff5ca5);flex:1;}
 
+  <div id="search-container" style="margin:12px 0; text-align:center;">
+  <input id="searchInput" 
+         type="text" 
+         placeholder="Search Pokémon..." 
+         style="padding:6px; width:180px; border-radius:6px;">
+  <button onclick="searchPokemon()" 
+          style="padding:6px 10px; border-radius:6px;">
+        Go
+  </button>
+</div>
+  
 /* screen */
 .screen {
   margin-top:10px;
@@ -414,6 +425,14 @@ async function playCry(name){
   alert("No game cry found for this Pokémon in the available sources.");
   isPlayingCry=false; callBtn.classList.remove('toggled');
 }
+
+function searchPokemon(){
+    const name = document.getElementById("searchInput").value.trim().toLowerCase();
+    if(!name) return;
+
+    loadPokemon(name);
+}
+  
 /* ========== TYPE CHART MODULE (inserted by assistant) ========== */
 
 const TYPE_CHART = {
@@ -519,6 +538,20 @@ async function loadPokemon(id){
     paths.forEach(p => p.forEach(n => speciesSet.add(n.species)));
     const fetchList = Array.from(speciesSet);
 
+    function checkURLForPokemon(){
+    const params = new URLSearchParams(window.location.search);
+    const name = params.get("pokemon");
+    if(name){
+        loadPokemon(name.toLowerCase());
+    }
+}
+window.addEventListener("load", checkURLForPokemon);
+
+    function openPokeInNewTab(name){
+    const url = window.location.origin + window.location.pathname + "?pokemon=" + name.toLowerCase();
+    window.open(url, "_blank");
+}
+
     // fetch details for all relevant variants
     const fetches = await Promise.all(fetchList.map(async nm=>{
       try{ const r = await fetch(`https://pokeapi.co/api/v2/pokemon/${nm}`); if(!r.ok) return {name:nm, ok:false}; const j = await r.json(); return {name:nm, ok:true, data:j}; }
@@ -560,7 +593,14 @@ async function loadPokemon(id){
         evoHtml += `<div class="evo-branch"><div class="evo-row">`;
         for(let i=0;i<path.length;i++){
           const st = path[i]; const info = varietyMap[st.species] || {spriteApi:SILHOUETTE_SVG, name:st.species, types:[]};
-          evoHtml += `<div class="evo-step"><img src="${info.pokedb}" data-api="${info.spriteApi}" data-showdown="${info.showdown}" alt="${capitalize(info.name)}" onerror="this.onerror=null;this.src=this.dataset.showdown||this.dataset.api||'${SILHOUETTE_SVG}';" /><div style="font-weight:900;margin-top:8px;">${capitalize(info.name)}</div>`;
+          evoHtml += `<div class="evo-step"><img src="${info.pokedb}" data-api="${info.spriteApi}" data-showdown="${info.showdown}" alt="${capitalize(info.name)}" onerror="this.onerror=null;this.src=this.dataset.showdown||this.dataset.api||'${SILHOUETTE_SVG}';" /><div 
+  class="evo-name"
+  style="font-weight:900;margin-top:8px;cursor:pointer;color:#4A7BFF;text-decoration:underline;"
+  onclick="openPokeInNewTab('${info.name.toLowerCase()}')"
+>
+  ${capitalize(info.name)}
+</div>
+`;
           if(info.types && info.types.length){ evoHtml += `<div style="display:flex;gap:6px;justify-content:center;margin-top:6px;">`; info.types.forEach(tt => evoHtml += `<div class="type" style="padding:4px 8px;font-size:12px;">${tt}</div>`); evoHtml += `</div>`; }
           evoHtml += `</div>`; if(i < path.length - 1) evoHtml += `<div class="arrow">→</div>`;
         }
@@ -862,6 +902,7 @@ loadEditorFromLocal();
 </script>
 </body>
 </html>
+
 
 
 
