@@ -645,8 +645,9 @@ async function loadPokemon(id){
         <h2 style="margin:6px 0;font-size:24px;">#${currentPokemonData.id} ${capitalize(currentPokemonData.name)}</h2>
         <p style="margin:0;color:#6a3b52;font-weight:800;">${genus}</p>
         <div class="images">
-       <img src="${pokedbArtworkUrl(pData.name)}" data-api="${pData.sprites.other?.['official-artwork']?.front_shiny || SILHOUETTE_SVG}" data-showdown="${showdownSpriteUrl(pData.name)}" alt="${capitalize(pData.name)} shiny" class="small-img" onerror="this.onerror=null;this.src=this.dataset.showdown||this.dataset.api||'${SILHOUETTE_SVG}';" />
-       </div>
+      ${artImgTag}
+          <img src="${pokedbArtworkUrl(pData.name)}" data-api="${pData.sprites.other?.['official-artwork']?.front_shiny || SILHOUETTE_SVG}" data-showdown="${showdownSpriteUrl(pData.name)}" alt="${capitalize(pData.name)} shiny" class="small-img" onerror="this.onerror=null;this.src=this.dataset.showdown||this.dataset.api||'${SILHOUETTE_SVG}';" />
+        </div>
         <div style="display:flex;align-items:center;gap:12px;flex-direction:row;justify-content:center;margin-top:8px;">
           <div class="generation-badge">${generationName}</div>
         </div>
@@ -861,6 +862,7 @@ loadEditorFromLocal();
 </script>
 </body>
 </html>
+
 
 
 
