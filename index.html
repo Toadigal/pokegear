@@ -653,6 +653,7 @@ async function loadPokemon(id){
     alt="${capitalize(pData.name)} shiny" 
     class="small-img"
     onerror="this.onerror=null; this.src='${pData.sprites.front_shiny || SILHOUETTE_SVG}';"/>
+    </div>
         <div style="display:flex;align-items:center;gap:12px;flex-direction:row;justify-content:center;margin-top:8px;">
           <div class="generation-badge">${generationName}</div>
         </div>
@@ -867,6 +868,7 @@ loadEditorFromLocal();
 </script>
 </body>
 </html>
+
 
 
 
