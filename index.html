@@ -64,17 +64,6 @@ body{
 .battery{width:48px;height:18px;border-radius:4px;border:2px solid #083e6b;display:flex;align-items:center;padding:2px 4px;box-sizing:border-box;}
 .bat-level{height:8px;border-radius:2px;background:linear-gradient(90deg,#ff86bf,#ff5ca5);flex:1;}
 
-  <div id="search-container" style="margin:12px 0; text-align:center;">
-  <input id="searchInput" 
-         type="text" 
-         placeholder="Search Pokémon..." 
-         style="padding:6px; width:180px; border-radius:6px;">
-  <button onclick="searchPokemon()" 
-          style="padding:6px 10px; border-radius:6px;">
-        Go
-  </button>
-</div>
-  
 /* screen */
 .screen {
   margin-top:10px;
@@ -213,7 +202,16 @@ button.generate:hover{transform:translateY(-2px);}
 
           <button id="generateBtn" class="generate" title="Roll a random Pokémon">💗 Roll</button>
         </div>
-
+ <div id="search-container" style="margin:12px 0; text-align:center;">
+  <input id="searchInput" 
+         type="text" 
+         placeholder="Search Pokémon..." 
+         style="padding:6px; width:180px; border-radius:6px;">
+  <button onclick="searchPokemon()" 
+          style="padding:6px 10px; border-radius:6px;">
+        Go
+  </button>
+</div>
         <div id="pokemonContainer" style="width:100%;display:flex;align-items:center;justify-content:center;margin-top:18px;"></div>
       </div>
 
@@ -504,7 +502,10 @@ function renderTypeChart(typeList){
 }
 
 /* ========== END TYPE CHART MODULE ========== */
-
+  function openPokeInNewTab(name){
+    const url = window.location.origin + window.location.pathname + "?pokemon=" + name.toLowerCase();
+    window.open(url, "_blank");
+}
 /* ---------- Core: load and render Pokémon ---------- */
 async function loadPokemon(id){
   pokemonContainer.innerHTML = '<div class="pokemon-card"><p style="opacity:.7">Loading Pokémon…</p></div>';
@@ -546,11 +547,6 @@ async function loadPokemon(id){
     }
 }
 window.addEventListener("load", checkURLForPokemon);
-
-    function openPokeInNewTab(name){
-    const url = window.location.origin + window.location.pathname + "?pokemon=" + name.toLowerCase();
-    window.open(url, "_blank");
-}
 
     // fetch details for all relevant variants
     const fetches = await Promise.all(fetchList.map(async nm=>{
@@ -902,6 +898,7 @@ loadEditorFromLocal();
 </script>
 </body>
 </html>
+
 
 
 
